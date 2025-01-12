@@ -1,5 +1,5 @@
 const express=require("express")
-const { loadRegister, insertUser } = require("../controllers/userController")
+const { loadRegister, insertUser, verifyMail } = require("../controllers/userController")
 
 
 
@@ -30,6 +30,7 @@ const upload=multer({storage:storage})
 
 user_route.get('/register',loadRegister)
 user_route.post('/register',upload.single('image'),insertUser)
+user_route.get('/verify',verifyMail)
 
 
 module.exports=user_route

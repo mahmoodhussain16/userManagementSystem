@@ -2,7 +2,7 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
-
+require('dotenv').config()
 const securePassword = async (password) => {
     try {
         const passwordHash = await bcrypt.hash(password, 10);
@@ -19,18 +19,18 @@ const securePassword = async (password) => {
 const sendVerifyEmail = async (name, email, user_id) => {
     try {
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com', // Note: Corrected the host to Gmail's SMTP
+            host: 'smtp.gmail.com', 
             port: 587,
             secure: false,
             requireTLS: true,
             auth: {
-                user: 'hussainmahmood952@gmail.com',
-                pass: 'bxpa ghpf nfox dzxl'
+                user: process.env.EMAIL_USER, 
+                pass: process.env.EMAIL_PASS 
             }
         });
         const mailOptions = {
-            from: 'hussainmahmood952@gmail.com',
-            to: email, // Passed email correctly
+            from: 'process.env.EMAIL_USER',
+            to: email, 
             subject: "for verification mail",
             html: '<p>Hi ' + name + ' ,please click here to <a href="http://localhost:4000/verify?id=' + user_id + '"> Verify </a> your mail. </p>'
         };

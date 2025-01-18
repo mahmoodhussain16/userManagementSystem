@@ -19,18 +19,18 @@ const securePassword = async (password) => {
 const sendVerifyEmail = async (name, email, user_id) => {
     try {
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com', 
+            host: 'smtp.gmail.com',
             port: 587,
             secure: false,
             requireTLS: true,
             auth: {
-                user: process.env.EMAIL_USER, 
-                pass: process.env.EMAIL_PASS 
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
             }
         });
         const mailOptions = {
             from: 'process.env.EMAIL_USER',
-            to: email, 
+            to: email,
             subject: "for verification mail",
             html: '<p>Hi ' + name + ' ,please click here to <a href="http://localhost:4000/verify?id=' + user_id + '"> Verify </a> your mail. </p>'
         };
@@ -99,6 +99,58 @@ const verifyMail = async (req, res) => {
     }
 }
 
+const loginLoad = async (req, res) => {
+    try {
+        res.render('login')
+
+    } catch (error) {
+        console.log(error.message);
+
+    }
+}
+const verifyLogin = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+        const userData = await User.findOne({ email: email })
+        if (userData) {
+            const passwordMatch = await bcrypt.compare(password, userData.password)
+            if (passwordMatch) {
+                if (userData.is_verified === 0) {
+                    res.render('login', { message: "Please Verify Your Email" })
+
+                } else {
+                    res.redirect('/home')
+                }
+
+
+            } else {
+                res.render('login', { message: "Email and password is incorrect" })
+
+            }
+
+
+        } else {
+            res.render('login', { message: "Email and password is incorrect" })
+
+        }
+    } catch (error) {
+        console.log(error.message);
+
+
+    }
+}
+const loadHome=async(req,res)=>{
+    try {
+        res.render('home')
+        
+    } catch (error) {
+        console.log(error.message);
+        
+        
+    }
+}
+
 module.exports = {
-    loadRegister, insertUser, securePassword,verifyMail
+    loadRegister, insertUser, securePassword, verifyMail, loginLoad,verifyLogin,loadHome
 }
